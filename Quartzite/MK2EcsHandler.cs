@@ -59,20 +59,6 @@ namespace Quartzite
                 index = Indexes.Dequeue();
             }
 
-            /*
-            if (index == -1)
-            {
-                int ResizeSize = GameObjects.Length * 2;
-                Array.Resize(ref GameObjects, ResizeSize);
-                Array.Resize(ref GameObjectIDs, ResizeSize);
-                Array.Resize(ref ObjectNames, ResizeSize);
-                Array.Resize(ref ObjectPositions, ResizeSize);
-                Array.Resize(ref ObjectVelocities, ResizeSize);
-                index = Array.IndexOf(GameObjects, null);
-                Console.WriteLine("had to resize the array");
-            }
-            */
-
             GameObjects[index] = gameObject;
             GameObjectIDs[index] = id;
             ObjectNames[index] = name;
@@ -82,12 +68,26 @@ namespace Quartzite
             return gameObject;
         }
 
-        /*public static void DestroyGameObject(int gameObjectID)
+        public static void DestroyGameObject(int gameObjectID)
         {
+            int index = Array.IndexOf(GameObjectIDs, gameObjectID);
+            if(index == -1)
+                return; 
             
-        } */
+            MK2GameObject gameObject = GameObjects[index];
+            
+            foreach(int componentID in gameObject.Components)
+            {
+                DestroyComponent(componentID);
+            }
 
-        // put DestroyGameObject here
+            Array.Clear(ObjectVelocities, index, index);
+            Array.Clear(ObjectPositions, index, index);
+            Array.Clear(ObjectNames, index, index);
+            Array.Clear(GameObjectIDs, index, index);
+
+            FreeGameObjectIDs.Enqueue(gameObjectID);
+        }
 
         public static MK2GameObject GetGameObject(int gameObjectID)
         {
