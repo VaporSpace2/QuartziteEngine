@@ -1,26 +1,22 @@
 namespace Quartzite
 {
-    public class GameObject(string name)
+    public struct GameObject(int id)
     {
-        public string Name = name;
-        public int SelfID { get; internal set; }
+        public int SelfID = id;
 
-        internal List<int> ComponentIDs = new();
+        public int[] Components = new int[16];
+    }
 
-        public void Destroy()
-        {
-            EntityComponentManager.DestroyGameObject(SelfID);
-        }
-        public int AddComponent(Component component)
-        {
-            EntityComponentManager.AddComponent(this, component);
-            return component.SelfID;
-        }
+    public struct Position(float x, float y)
+    {
+        public float X = x;
+        public float Y = y;
+    }
 
-        public void RemoveComponent(int componentID)
-        {
-            EntityComponentManager.DestroyComponent(componentID);
-        }
+    public struct Velocity(float x, float y)
+    {
+        public float VelocityX = x;
+        public float VelocityY = y;
     }
 
     public abstract class Component()

@@ -6,18 +6,17 @@ using testingScene;
 
 Console.WriteLine("Testing time");
 
-MK2EntityComponentManager.InitEcsManager();
+gameObject.InitEcsManager();
 
 MK2GameObject gameObjectSpam;
 await Task.Delay(1000 - DateTime.Now.Millisecond);
 int time = DateTime.Now.Millisecond;
 for (int i = 1; i != 30000; i++)
 {
-    gameObjectSpam = MK2EntityComponentManager.NewGameObject("ads");
-    MK2EntityComponentManager.AddComponent(gameObjectSpam, new customComponent());
+    gameObjectSpam = gameObject.NewGameObject("ads");
+    gameObject.AddComponent(gameObjectSpam, new customComponent());
 }
-Console.WriteLine(time);
-Console.WriteLine(DateTime.Now.Millisecond);
+Console.WriteLine(time + ", " + DateTime.Now.Millisecond);
 
 // Testing code here //
 

@@ -1,6 +1,6 @@
 namespace Quartzite
 {
-    public static class MK2EntityComponentManager
+    public static class gameObject
     {
         private static Queue<int> Indexes = new(); // holds 'unused' or 'empty' available spots in the GameObjects array
 
@@ -15,7 +15,7 @@ namespace Quartzite
         // GameObject related fields //
 
         private static int NextGameObjectID = 0;
-        private static MK2GameObject[] GameObjects = new MK2GameObject[32];
+        private static GameObject[] GameObjects = new GameObject[32];
         private static string[] ObjectNames = new string[32];
         private static Quartzite.Position[] ObjectPositions = new Position[32];
         private static Velocity[] ObjectVelocities = new Velocity[32];
@@ -31,11 +31,11 @@ namespace Quartzite
 
         // GameObject related functions //
 
-        public static MK2GameObject NewGameObject(string name)
+        public static GameObject NewGameObject(string name)
         {
             int id = GenGameObjectID();
 
-            MK2GameObject gameObject = new(id);
+            GameObject gameObject = new(id);
             int index = 0;
 
             if (Indexes.Count > 0)
@@ -74,7 +74,7 @@ namespace Quartzite
             if(index == -1)
                 return; 
             
-            MK2GameObject gameObject = GameObjects[index];
+            GameObject gameObject = GameObjects[index];
             
             foreach(int componentID in gameObject.Components)
             {
@@ -89,7 +89,7 @@ namespace Quartzite
             FreeGameObjectIDs.Enqueue(gameObjectID);
         }
 
-        public static MK2GameObject GetGameObject(int gameObjectID)
+        public static GameObject GetGameObject(int gameObjectID)
         {
             return GameObjects[Array.IndexOf(GameObjectIDs, gameObjectID)];
         }
@@ -104,7 +104,7 @@ namespace Quartzite
 
         // Component related functions //
 
-        public static void AddComponent(MK2GameObject gameObject, Component component)
+        public static void AddComponent(GameObject gameObject, Component component)
         {
             int id = GenComponentID();
 
