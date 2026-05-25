@@ -71,20 +71,20 @@ namespace Quartzite
         public static void DestroyGameObject(int gameObjectID)
         {
             int index = Array.IndexOf(GameObjectIDs, gameObjectID);
-            if(index == -1)
-                return; 
-            
+            if (index == -1)
+                return;
+
             GameObject gameObject = GameObjects[index];
-            
-            foreach(int componentID in gameObject.Components)
+
+            foreach (int componentID in gameObject.Components)
             {
                 DestroyComponent(componentID);
             }
 
-            Array.Clear(ObjectVelocities, index, index);
-            Array.Clear(ObjectPositions, index, index);
-            Array.Clear(ObjectNames, index, index);
-            Array.Clear(GameObjectIDs, index, index);
+            Array.Clear(ObjectVelocities, index, 1);
+            Array.Clear(ObjectPositions, index, 1);
+            Array.Clear(ObjectNames, index, 1);
+            Array.Clear(GameObjectIDs, index, 1);
 
             FreeGameObjectIDs.Enqueue(gameObjectID);
         }
@@ -138,7 +138,7 @@ namespace Quartzite
 
         public static void DestroyComponent(int componentID)
         {
-            int index = Array.IndexOf(Components, componentID);
+            int index = Array.IndexOf(ComponentIDs, componentID);
 
             if (index == -1)
                 return;
@@ -150,7 +150,7 @@ namespace Quartzite
             }
 
             Components[index].DeInit();
-            Array.Clear(Components, index, index);
+            Array.Clear(Components, index, 1);
             ComponentIDs[index] = 0;
             FreeComponentIDs.Enqueue(componentID);
         }

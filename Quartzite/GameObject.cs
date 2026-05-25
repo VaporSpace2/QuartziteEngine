@@ -1,6 +1,6 @@
 namespace Quartzite
 {
-    public struct GameObject(int id)
+    public class GameObject(int id)
     {
         public int SelfID = id;
 
