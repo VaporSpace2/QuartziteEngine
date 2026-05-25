@@ -8,7 +8,7 @@ Console.WriteLine("Testing time");
 
 gameObject.InitEcsManager();
 
-MK2GameObject gameObjectSpam;
+GameObject gameObjectSpam;
 await Task.Delay(1000 - DateTime.Now.Millisecond);
 int time = DateTime.Now.Millisecond;
 for (int i = 1; i != 30000; i++)
