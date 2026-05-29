@@ -26,6 +26,7 @@ namespace Quartzite
 
         private static int NextComponentID = 0;
         private static Component[] Components = new Component[128];
+        private static int[] ActiveComponentIndexes = new int[128];
         public static int[] ComponentIDs = new int[128];
         public static Queue<int> FreeComponentIDs = new();
 

@@ -8,12 +8,12 @@ Console.WriteLine("Testing time");
 
 gameObject.InitEcsManager();
 
-GameObject gameObjectSpam;
+GameObject gameObjectSpam = gameObject.NewGameObject("asd");
 await Task.Delay(1000 - DateTime.Now.Millisecond);
 int time = DateTime.Now.Millisecond;
 for (int i = 1; i != 30000; i++)
 {
-    gameObjectSpam = gameObject.NewGameObject("ads");
+    //gameObjectSpam = gameObject.NewGameObject("ads");
     gameObject.AddComponent(gameObjectSpam, new customComponent());
 }
 Console.WriteLine(time + ", " + DateTime.Now.Millisecond);
