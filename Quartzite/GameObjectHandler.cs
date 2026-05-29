@@ -14,17 +14,17 @@ namespace Quartzite
 
         // GameObject related fields //
 
-        private static int NextGameObjectID = 0;
+        private static int NextGameObjectID = 1;
         private static GameObject[] GameObjects = new GameObject[32];
         private static string[] ObjectNames = new string[32];
-        private static Quartzite.Position[] ObjectPositions = new Position[32];
+        private static Position[] ObjectPositions = new Position[32];
         private static Velocity[] ObjectVelocities = new Velocity[32];
         public static int[] GameObjectIDs = new int[32];
         private static Queue<int> FreeGameObjectIDs = new();
 
         // Component related fields //
 
-        private static int NextComponentID = 0;
+        private static int NextComponentID = 1;
         private static Component[] Components = new Component[128];
         private static int[] ActiveComponentIndexes = new int[128];
         public static int[] ComponentIDs = new int[128];
@@ -79,15 +79,18 @@ namespace Quartzite
 
             foreach (int componentID in gameObject.Components)
             {
-                DestroyComponent(componentID);
+                if (componentID != 0)
+                    DestroyComponent(componentID);
             }
 
             Array.Clear(ObjectVelocities, index, 1);
             Array.Clear(ObjectPositions, index, 1);
             Array.Clear(ObjectNames, index, 1);
             Array.Clear(GameObjectIDs, index, 1);
+            Array.Clear(GameObjects, index, 1);
 
             FreeGameObjectIDs.Enqueue(gameObjectID);
+            Indexes.Enqueue(index);
         }
 
         public static GameObject GetGameObject(int gameObjectID)
@@ -144,10 +147,11 @@ namespace Quartzite
             if (index == -1)
                 return;
 
-            int indexOfComponent = Array.IndexOf(GameObjects[Components[index].OwnerID].Components, componentID);
+            int indexOfParent = Array.IndexOf(GameObjectIDs, Components[index].OwnerID);
+            int indexOfComponent = Array.IndexOf(GameObjects[indexOfParent].Components, componentID);
             if (indexOfComponent != -1)
             {
-                GameObjects[index].Components[indexOfComponent] = 0;
+                GameObjects[indexOfParent].Components[indexOfComponent] = 0;
             }
 
             Components[index].DeInit();
