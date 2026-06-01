@@ -10,11 +10,14 @@ gameObject.InitEcsManager();
 
 GameObject gameObjectSpam = gameObject.NewGameObject("asd");
 await Task.Delay(1000 - DateTime.Now.Millisecond);
+for (int i = 1; i != 30000; i++)
+{
+    gameObject.AddComponent(gameObjectSpam, new customComponent());
+}
 int time = DateTime.Now.Millisecond;
 for (int i = 1; i != 30000; i++)
 {
-    //gameObjectSpam = gameObject.NewGameObject("ads");
-    gameObject.AddComponent(gameObjectSpam, new customComponent());
+    gameObject.DeactivateComponent(i);
 }
 Console.WriteLine(time + ", " + DateTime.Now.Millisecond);
 

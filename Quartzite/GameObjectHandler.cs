@@ -26,7 +26,7 @@ namespace Quartzite
 
         private static int NextComponentID = 1;
         private static Component[] Components = new Component[128];
-        private static int[] ActiveComponentIndexes = new int[128];
+        private static List<int> ActiveComponentIndexes = new List<int>();
         public static int[] ComponentIDs = new int[128];
         public static Queue<int> FreeComponentIDs = new();
 
@@ -138,6 +138,7 @@ namespace Quartzite
             }
 
             gameObject.Components[index] = id;
+            ActivateComponent(id);
         }
 
         public static void DestroyComponent(int componentID)
@@ -158,6 +159,32 @@ namespace Quartzite
             Array.Clear(Components, index, 1);
             ComponentIDs[index] = 0;
             FreeComponentIDs.Enqueue(componentID);
+        }
+
+        public static void ActivateComponent(int componentID)
+        {
+            int index = Array.IndexOf(ComponentIDs, componentID);
+
+            if (index == -1) // if comp no exist then why run function
+                return;
+
+            if (ActiveComponentIndexes.IndexOf(index) != -1) // if already active then quit function
+                return;
+
+            ActiveComponentIndexes.Add(index);
+        }
+
+        public static void DeactivateComponent(int componentID)
+        {
+            int index = Array.IndexOf(ComponentIDs, componentID);
+
+            if (index == -1)
+                return;
+
+            if (ActiveComponentIndexes.IndexOf(index) == -1)
+                return;
+
+            ActiveComponentIndexes.RemoveAt(ActiveComponentIndexes.IndexOf(index));
         }
 
         public static int GenComponentID()
