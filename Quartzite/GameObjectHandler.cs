@@ -3,7 +3,7 @@ namespace Quartzite
     public static class gameObject
     {
         private static Queue<int> Indexes = new(); // holds 'unused' or 'empty' available spots in the GameObjects array
-
+        public static bool Instantiated = false; // wether or not the manager has been instantiated
         public static void InitEcsManager()
         {
             for (int i = 0; i < 32; i++)
@@ -25,8 +25,10 @@ namespace Quartzite
         // Component related fields //
 
         private static int NextComponentID = 1;
-        private static Component[] Components = new Component[128];
-        private static List<int> ActiveComponentIndexes = new List<int>();
+        public static Component[] Components = new Component[128];
+        public static List<int> ActiveComponentIndexes = new List<int>();
+        public static List<int> QueuedComponentDeactivateIndexes = new List<int>();
+        public static List<int> QueuedComponentDestroyIDs = new List<int>();
         public static int[] ComponentIDs = new int[128];
         public static Queue<int> FreeComponentIDs = new();
 
@@ -148,17 +150,30 @@ namespace Quartzite
             if (index == -1)
                 return;
 
-            int indexOfParent = Array.IndexOf(GameObjectIDs, Components[index].OwnerID);
-            int indexOfComponent = Array.IndexOf(GameObjects[indexOfParent].Components, componentID);
-            if (indexOfComponent != -1)
+            QueuedComponentDestroyIDs.Add(componentID);
+            DeactivateComponent(componentID);
+        }
+
+        public static void ClearComponentDestroyList()
+        {
+            foreach (int componentID in QueuedComponentDestroyIDs)
             {
-                GameObjects[indexOfParent].Components[indexOfComponent] = 0;
+                int index = Array.IndexOf(ComponentIDs, componentID);
+
+                int indexOfParent = Array.IndexOf(GameObjectIDs, Components[index].OwnerID);
+                int indexOfComponent = Array.IndexOf(GameObjects[indexOfParent].Components, componentID);
+                if (indexOfComponent != -1)
+                {
+                    GameObjects[indexOfParent].Components[indexOfComponent] = 0;
+                }
+
+                Components[index].DeInit();
+                Array.Clear(Components, index, 1);
+                ComponentIDs[index] = 0;
+                FreeComponentIDs.Enqueue(componentID);
             }
 
-            Components[index].DeInit();
-            Array.Clear(Components, index, 1);
-            ComponentIDs[index] = 0;
-            FreeComponentIDs.Enqueue(componentID);
+            QueuedComponentDestroyIDs.Clear();
         }
 
         public static void ActivateComponent(int componentID)
@@ -172,6 +187,7 @@ namespace Quartzite
                 return;
 
             ActiveComponentIndexes.Add(index);
+            Components[index].Active = true;
         }
 
         public static void DeactivateComponent(int componentID)
@@ -184,7 +200,18 @@ namespace Quartzite
             if (ActiveComponentIndexes.IndexOf(index) == -1)
                 return;
 
-            ActiveComponentIndexes.RemoveAt(ActiveComponentIndexes.IndexOf(index));
+            QueuedComponentDeactivateIndexes.Add(index);
+        }
+
+        public static void ClearComponentActiveList()
+        {
+            foreach (int component in QueuedComponentDeactivateIndexes)
+            {
+                ActiveComponentIndexes.RemoveAt(ActiveComponentIndexes.IndexOf(component));
+                Components[component].Active = false;
+            }
+
+            QueuedComponentDeactivateIndexes.Clear();
         }
 
         public static int GenComponentID()
